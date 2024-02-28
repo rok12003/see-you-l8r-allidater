@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 .vector_cache/
+okcupid_profiles.csv
