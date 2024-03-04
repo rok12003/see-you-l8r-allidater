@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information Form and Results</title>
+    <style>
+        body {
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Tell the Allidater about yourself...</h2>
+<form action="{{ url_for('generated_users') }}" method="post">
+    <label for="gender">Gender:</label>
+    <select name="gender" id="gender">
+        <option value="male" {{ 'selected' if gender == 'male' else '' }}>Male</option>
+        <option value="female" {{ 'selected' if gender == 'female' else '' }}>Female</option>
+        <option value="other" {{ 'selected' if gender == 'other' else '' }}>Other</option>
+    </select>
+    <br>
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" value="{{ age }}">
+    <br>
+    <label for="biography">Biography:</label>
+    <textarea id="biography" name="biography">{{ biography }}</textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+{% if results %}
+    <h2>Generated Bio - Method #1</h2>
+    <p>{{ results }}</p>
+{% endif %}
+
+
+
+</body>
+</html>
