@@ -5,9 +5,11 @@ import os
 
 from sentence_transformers import SentenceTransformer
 from scipy.spatial.distance import cosine
+from detoxify import Detoxify
 
 # %%
 model = SentenceTransformer('all-MiniLM-L6-v2')
+toxic_model = Detoxify("original")
 
 # %%
 df = pd.read_csv("../data/okcupid_profiles.csv")
@@ -52,6 +54,10 @@ def take(n, iterable):
 
 # %%
 def rank_matches(input_bio, pref_gender=False, pref_age_lower=False, pref_age_higher=False, top_n=5):
+    ## Do not generate text if input bio fails toxicity test
+    toxicity_rubric_input = toxic_model.predict(input_bio)
+    if toxicity_rubric_input['severe_toxicity'] > 0.1 or toxicity_rubric_input['threat'] > 0.01:
+        return "Your generated matches cannot be shown due to harmful material in your bio. Please modify and try again."
     df_possible = df_all.copy()
     if pref_gender:
         df_possible = df_possible.loc[df_possible.loc[:,'sex'] == pref_gender, :]
@@ -74,7 +80,6 @@ def rank_matches(input_bio, pref_gender=False, pref_age_lower=False, pref_age_hi
     top_match = take(5, ranked_similarity.items())
 
     bios = [essays_df.loc[t[0], "all_essays"] for t in top_match]
-
 
     return bios
 
