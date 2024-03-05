@@ -85,6 +85,11 @@ def generate_profile(input_str, eval_fake = False, pref_gender=False, pref_age_l
     generator = pipeline('text-generation', model='gpt2')
     all_returned = generator(prompt, do_sample=True, temperature = 0.9, truncation = True,
                          min_length=200, max_length = 1000, num_return_sequences=1)
-    fake_profile = all_returned[0]['generated_text'].replace(prompt, "")
+    fake_profile = all_returned[0]['generated_text'].replace(prompt, "").replace("This is a good match:", "")
+    
+    toxicity_rubric_generated = toxic_model.predict(fake_profile)
+    ## Do not return generated text if it fails toxicity test
+    if toxicity_rubric_generated['severe_toxicity'] > 0.1 or toxicity_rubric_generated['threat'] > 0.01:
+        return "Your generated match cannot be shown. Please try again."
 
     return fake_profile
