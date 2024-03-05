@@ -10,7 +10,7 @@ toxic_model = Detoxify("original")
 
 # %%  
 def generate_text(prompt_text):
-    
+
     ## Do not generate text if input bio fails toxicity test
     toxicity_rubric_input = toxic_model.predict(prompt_text)
     if toxicity_rubric_input['severe_toxicity'] > 0.1 or toxicity_rubric_input['threat'] > 0.01:

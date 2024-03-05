@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 from helpers.sentence_matcher import rank_matches
 from helpers.finetuned_generator import generate_text
-from helpers.toxicity import detox
+from helpers.profile_generator import generate_profile
+import csv
 
 app = Flask(__name__)
 
@@ -15,12 +16,16 @@ def choice():
 
 @app.route('/existingmatches')
 def existing_matches():
-    return render_template('existingmatches.html')
+    csv_file = '../data/top_pairs.csv'
+    with open(csv_file, 'r') as file:
+        csv_reader = csv.reader(file)
+        data = list(csv_reader)
+
+    return render_template('existingmatches.html', data=data)
 
 @app.route('/realusers', methods=['GET', 'POST'])
 def real_users():
     if request.method == "POST":
-        gender = request.form.get('gender')
         if gender == "female":
             gender_match = "f"
         elif gender == "male":
@@ -52,18 +57,23 @@ def real_users():
 @app.route('/generatedusers', methods=['GET', 'POST'])
 def generated_users():
     if request.method == "POST":
+        gender = request.form.get('gender')
+        age = request.form.get('age')
         biography = request.form['biography']
         if biography != "":
             bio_list = generate_text(biography)
+            bio_list2 = generate_profile(biography)
         else:
             bio_list = ["Write something"]
+            bio_list2 = ["Write something"]
     else:
         gender = ''
         age = ''
         biography = ''
         bio_list = []
+        bio_list2 = []
 
-    return render_template('generatedusers.html', results=bio_list)
+    return render_template('generatedusers.html', results=bio_list, results2=bio_list2, gender=gender, age=age, biography=biography)
 
 if __name__ == "__main__":
     app.run(debug=True)

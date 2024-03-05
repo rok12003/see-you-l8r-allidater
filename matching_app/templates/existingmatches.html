@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,10 +8,27 @@
         body {
             background-color: pink;
         }
+        .container {
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 10px;
+        }
+        .container p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
-    <h1>Placeholder page!</h1>
-    <p>This is a placeholder page for a few matches that already were computed - let's do very high cosine similarity ones</p>
+    <h1>Existing Matches</h1>
+    <div class="container">
+        {% if data %}
+            {% for row in data %}
+                <p>{{ row[0] }}</p>
+                <p>{{ row[1] }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No existing matches found.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
