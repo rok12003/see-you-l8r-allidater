@@ -26,6 +26,7 @@ def existing_matches():
 @app.route('/realusers', methods=['GET', 'POST'])
 def real_users():
     if request.method == "POST":
+        gender = request.form.get('gender')  
         if gender == "female":
             gender_match = "f"
         elif gender == "male":
