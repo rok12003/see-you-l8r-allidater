@@ -65,7 +65,7 @@ def construct_prompt(input_string, matches, num_char = False):
     
 # %%
 def generate_profile(input_str, eval_fake = False, pref_gender=False, pref_age_lower=False, 
-                     pref_age_higher=False, min_similarity_score = 0.5):
+                     pref_age_higher=False, min_similarity_score = 0.65):
     toxicity_rubric_input = toxic_model.predict(input_str)
     if toxicity_rubric_input['severe_toxicity'] > 0.1 or toxicity_rubric_input['threat'] > 0.01:
         return "Your generated match cannot be shown due to harmful material in your bio. Please modify and try again."
@@ -80,7 +80,7 @@ def generate_profile(input_str, eval_fake = False, pref_gender=False, pref_age_l
     try: 
         prompt = construct_prompt(input_str, new_input_matches, 200)     
     except Exception as e:
-        return "Sorry, no matches here."
+        return "Sorry, we cannot deploy this method as you do not have enough matches in the current dataframe to use a generative model with."
     
     generator = pipeline('text-generation', model='gpt2')
     all_returned = generator(prompt, do_sample=True, temperature = 0.9, truncation = True,
