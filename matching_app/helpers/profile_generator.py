@@ -17,6 +17,11 @@ toxic_model = Detoxify("original")
 
 # %%
 def rank_new_input(input_str, df_all, model, embedding_series, eval_fake = False, pref_gender=False, pref_age_lower=False, pref_age_higher=False, min_similarity_score = 0.5):
+    '''
+    Take in a new input, create embeddings, and calculate cosine similarity, 
+    then compare to all other potential partners in the dataset and return a ranked list of matches. 
+    If evaluating a fake profile in relation to an input string, also add that to the data frame to be ranked. 
+    '''
     df_possible = df_all.copy()
     if pref_gender:
         df_possible = df_possible.loc[df_possible.loc[:,'sex'] == pref_gender, :]
@@ -42,6 +47,9 @@ def rank_new_input(input_str, df_all, model, embedding_series, eval_fake = False
     return ranked_similarity
 
 def compute_cosine_similarity(target_vector, vectors):
+    '''
+    Compute cosine similarity between one vector and many others
+    '''
     similarities = []
     for vector in vectors:
         similarity = 1 - cosine(target_vector, vector)  # 1 - cosine distance to get cosine similarity
@@ -50,6 +58,10 @@ def compute_cosine_similarity(target_vector, vectors):
 
 # %%
 def construct_prompt(input_string, matches, num_char = False):
+    '''
+    Take an input string and the top matches for that person, 
+    then build a few shot learning prompt to illustrate what the essays of a good match look like. 
+    '''
     slice_len = min(2, len(matches))
     top_matches_slice = matches[:slice_len]
     essays_to_use = ["essay0", "essay1", "essay2", "essay3", "essay4", 
@@ -66,6 +78,9 @@ def construct_prompt(input_string, matches, num_char = False):
 # %%
 def generate_profile(input_str, eval_fake = False, pref_gender=False, pref_age_lower=False, 
                      pref_age_higher=False, min_similarity_score = 0.65):
+    '''
+    Function to generate the profile.
+    '''
     toxicity_rubric_input = toxic_model.predict(input_str)
     if toxicity_rubric_input['severe_toxicity'] > 0.1 or toxicity_rubric_input['threat'] > 0.01:
         return "Your generated match cannot be shown due to harmful material in your bio. Please modify and try again."
