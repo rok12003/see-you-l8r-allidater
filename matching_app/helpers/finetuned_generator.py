@@ -10,6 +10,11 @@ toxic_model = Detoxify("original")
 
 # %%  
 def generate_text(prompt_text):
+    '''
+    Generates text from the user's input using the fine-tuned model, ensuring that the user's input is not harmful using Detoxify.
+    Input: The text of the prompt (str)
+    Output: The generated output if input & output passes the check or a message telling the user their input/output was harmful. 
+    '''
 
     ## Do not generate text if input bio fails toxicity test
     toxicity_rubric_input = toxic_model.predict(prompt_text)
