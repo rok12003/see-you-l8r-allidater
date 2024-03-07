@@ -39,6 +39,9 @@ embedding_array = np.load(os.path.join(dir_path, 'sentence_transformer_embedding
 
 # %%
 def compute_cosine_similarity(target_vector, vectors):
+    '''
+    Compute cosine similarity between one vector and many others
+    '''
     similarities = []
     for vector in vectors:
         similarity = 1 - cosine(target_vector, vector)  # 1 - cosine distance to get cosine similarity
@@ -54,6 +57,10 @@ def take(n, iterable):
 
 # %%
 def rank_matches(input_bio, pref_gender=False, pref_age_lower=False, pref_age_higher=False, top_n=5):
+    '''
+    Take in a row of data, create embeddings, and calculate cosine similarity, 
+    then compare to all other potential partners in the dataset and return a ranked list of matches.
+    '''
     ## Do not generate text if input bio fails toxicity test
     toxicity_rubric_input = toxic_model.predict(input_bio)
     if toxicity_rubric_input['severe_toxicity'] > 0.1 or toxicity_rubric_input['threat'] > 0.01:
